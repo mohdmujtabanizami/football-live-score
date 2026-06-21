@@ -2,6 +2,12 @@ import React, { useState, useEffect } from "react";
 import "./MatchDetails.css";
 
 function MatchDetails({ match, onBack, onPlayerClick }) {
+  match = {
+  ...match,
+  lineups: match.lineups || [],
+  stats: match.stats || [],
+  events: match.events || [],
+};
   const [darkMode, setDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem("matchTheme");
     return savedTheme ? JSON.parse(savedTheme) : true;
@@ -13,8 +19,19 @@ function MatchDetails({ match, onBack, onPlayerClick }) {
 
   // ================= DATA PARSING HELPERS =================
   
-  const homeLineup = match.lineups?.find(l => l.team.id === match.homeId) || {};
-  const awayLineup = match.lineups?.find(l => l.team.id === match.awayId) || {};
+ const lineups = Array.isArray(match.lineups)
+  ? match.lineups
+  : [];
+
+const homeLineup =
+  lineups.find(
+    (l) => l?.team?.id === match.homeId
+  ) || {};
+
+const awayLineup =
+  lineups.find(
+    (l) => l?.team?.id === match.awayId
+  ) || {};
   
   const homeCoach = homeLineup.coach || {};
   const awayCoach = awayLineup.coach || {};
@@ -34,8 +51,11 @@ function MatchDetails({ match, onBack, onPlayerClick }) {
   const homeFormation = groupFormation(homeLineup.startXI);
   const awayFormation = groupFormation(awayLineup.startXI);
 
-  const homeStats = match.stats?.find(s => s.team.id === match.homeId)?.statistics || [];
-  const awayStats = match.stats?.find(s => s.team.id === match.awayId)?.statistics || [];
+ const homeStats =
+  match.stats?.find(s => s?.team?.id === match.homeId)?.statistics || [];
+
+const awayStats =
+  match.stats?.find(s => s?.team?.id === match.awayId)?.statistics || [];
   
   const getStat = (statsArray, type) => {
     const stat = statsArray.find(s => s.type === type);
@@ -51,8 +71,11 @@ function MatchDetails({ match, onBack, onPlayerClick }) {
   };
 
   // --- SMART NAME & ROLE DETECTORS ---
-  const isCaptain = (p) => p && (p.captain === true || (p.name && p.name.includes('(C)')));
-  const isGK = (p) => p && (p.pos === 'G' || (p.name && p.name.includes('(G)')));
+ const isCaptain = (p) =>
+  p && (p.captain === true || (p.name || "").includes("(C)"));
+
+const isGK = (p) =>
+  p && (p.pos === "G" || (p.name || "").includes("(G)"));
   const cleanName = (name) => name ? name.replace(/\s*\([CG]\)/g, '').trim() : '';
 
   // --- TACTICS DESCRIPTIONS DICTIONARY ---
@@ -69,7 +92,7 @@ function MatchDetails({ match, onBack, onPlayerClick }) {
     if (!formation) return "Tactical details not available for this team.";
     return formationDescriptions[formation] || "A strategic setup adapted to the team's specific tactical requirements on the pitch.";
   };
-
+console.log("MATCH DATA", match);
   return (
     <div className={`match-details-page ${darkMode ? "dark-theme" : "light-theme"}`}>
       <button className="back-btn" onClick={onBack}>← Back</button>
@@ -139,8 +162,8 @@ function MatchDetails({ match, onBack, onPlayerClick }) {
                   <div className="api-event-icon-wrap">
                     <span className={`event-icon ${eventType}`}>
                       {eventType === "goal" && "⚽"}
-                      {eventType === "card" && event.detail.includes("Yellow") && "🟨"}
-                      {eventType === "card" && event.detail.includes("Red") && "🟥"}
+                      {eventType === "card" && (event.detail || "").includes("Yellow") && "🟨"}
+                      {eventType === "card" && (event.detail || "").includes("Red") && "🟥"}
                       {eventType === "subst" && "🔄"}
                     </span>
                   </div>
