@@ -1,4 +1,5 @@
 import { API_URL } from "../config";
+import { dummyMatches } from "../data/dummyMatches";
 import { useEffect, useState } from "react";
 
 export default function useMatches(
@@ -103,7 +104,11 @@ export default function useMatches(
             formattedMatches
           );
         })
-        .catch(console.log);
+        .catch((err) => {
+  console.log(err);
+
+  setMatches(dummyMatches);
+});
     };
 
     fetchScores();
