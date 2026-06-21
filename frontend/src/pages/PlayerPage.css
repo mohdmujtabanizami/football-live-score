@@ -1,0 +1,538 @@
+.dark-theme{
+  --bg:#07152e;
+  --card:#132544;
+  --text:#ffffff;
+  --subtext:#b7c3da;
+  --border:rgba(255,255,255,.08);
+}
+
+.light-theme{
+  --bg:#f3f4f6;
+  --card:#ffffff;
+  --text:#111827;
+  --subtext:#6b7280;
+  --border:#e5e7eb;
+}
+
+.player-page{
+  min-height:100vh;
+  background:var(--bg);
+  color:var(--text);
+  transition:.3s;
+}
+
+.player-header{
+text-align:center;
+}
+
+.player-image{
+width:150px;
+height:150px;
+border-radius:50%;
+object-fit:cover;
+}
+
+.player-info{
+margin-top:20px;
+padding:20px;
+border-radius:12px;
+background:#1f2937;
+background:var(--card);
+border:1px solid var(--border);
+color:var(--text);
+}
+
+.player-info p{
+margin:10px 0;
+}
+
+.player-stats{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:15px;
+margin-top:20px;
+}
+
+.stat-card{
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+
+  padding:20px;
+  border-radius:12px;
+
+  transition:.3s;
+}
+
+.stat-card:hover{
+   transform:translateY(-5px);
+  box-shadow:0 8px 20px rgba(37,99,235,.25);
+
+  background:#2563eb;
+}
+.player-page{
+  padding:20px;
+  text-align:center;
+}
+
+.player-header{
+  margin-top:20px;
+}
+
+.player-image{
+  width:180px;
+  height:180px;
+  border-radius:50%;
+  object-fit:cover;
+}
+
+.player-info{
+  margin-top:20px;
+}
+
+.player-info p{
+  margin:10px 0;
+}
+
+.player-stats{
+  display:grid;
+  grid-template-columns:
+  repeat(auto-fit,minmax(150px,1fr));
+
+  gap:15px;
+
+  margin-top:30px;
+}
+
+.stat-card{
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+
+  padding:20px;
+  border-radius:12px;
+
+  transition:.3s;
+}
+.player-badges{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-top:10px;
+}
+
+.player-badges span{
+  background:#2563eb;
+  padding:8px 14px;
+  border-radius:20px;
+  font-size:14px;
+  font-weight:bold;
+}
+.season-section{
+  margin-top:30px;
+}
+
+.season-grid{
+  display:grid;
+  grid-template-columns:
+  repeat(auto-fit,minmax(180px,1fr));
+
+  gap:15px;
+}
+
+.season-card{
+  background:#1e293b;
+  padding:15px;
+  border-radius:12px;
+  background:var(--card);
+border:1px solid var(--border);
+color:var(--text);
+}
+.player-bio{
+  margin-top:30px;
+  background:var(--card);
+  border:1px solid var(--border);
+  color:var(--text);
+  padding:20px;
+  border-radius:12px;
+}
+.player-stats .stat-card h2{
+  color:#38bdf8;
+}
+.player-card-info{
+  margin-top:15px;
+}
+
+.jersey-badge{
+
+  width:70px;
+
+  margin:auto;
+
+  padding:10px;
+
+  border-radius:12px;
+
+  background:#2563eb;
+
+  font-size:22px;
+
+  font-weight:bold;
+
+  color:white;
+
+  box-shadow:
+  0 0 15px rgba(37,99,235,.6);
+
+}
+.player-header{
+  padding:30px;
+  border-radius:20px;
+  background:var(--card);
+  border:1px solid var(--border);
+}
+.rating-stars{
+  margin-top:8px;
+
+  font-size:18px;
+
+  letter-spacing:2px;
+}
+.rating-stars{
+  color:#facc15;
+
+  text-shadow:
+  0 0 10px rgba(250,204,21,.7);
+}
+.market-value-card{
+
+  margin-top:20px;
+
+  background:
+  linear-gradient(
+    135deg,
+    #1e293b,
+    #0f172a
+    
+  );
+
+  padding:20px;
+
+  border-radius:15px;
+
+  text-align:center;
+
+  box-shadow:
+  0 0 20px rgba(34,197,94,.15);
+background:var(--card);
+border:1px solid var(--border);
+color:var(--text);
+}
+
+.market-value-card h3{
+
+  color:#94a3b8;
+
+  margin-bottom:10px;
+
+}
+
+.market-value-card h1{
+
+  color:#22c55e;
+
+  font-size:32px;
+
+}
+.form-badges{
+
+  display:flex;
+
+  justify-content:center;
+
+  gap:8px;
+
+}
+.form-badges span{
+
+  width:35px;
+
+  height:35px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  border-radius:50%;
+
+  font-weight:bold;
+
+  color:white;
+
+}
+.win{
+  background:#22c55e;
+}
+.draw{
+  background:#f59e0b;
+}
+.loss{
+  background:#ef4444;
+}
+.trophy-section{
+  margin-top:30px;
+}
+.trophy-grid{
+
+  display:grid;
+
+  grid-template-columns:
+  repeat(auto-fit,minmax(150px,1fr));
+
+  gap:15px;
+
+}
+.trophy-card{
+
+  background:#1e293b;
+
+  padding:20px;
+
+  border-radius:12px;
+
+  text-align:center;
+
+  transition:.3s;
+  background:var(--card);
+border:1px solid var(--border);
+color:var(--text);
+
+}
+.trophy-card:hover{
+
+  transform:
+  translateY(-5px);
+
+}
+.trophy-card h3{
+
+  font-size:28px;
+
+  color:#facc15;
+
+}
+.career-section{
+  margin-top:30px;
+}
+.career-card{
+
+  background:#1e293b;
+
+  padding:20px;
+
+  border-radius:12px;
+background:var(--card);
+border:1px solid var(--border);
+color:var(--text);
+}
+.career-item{
+
+  border-left:3px solid #2563eb;
+
+  padding-left:15px;
+
+  margin-bottom:20px;
+
+}
+.career-item h3{
+
+  color:#38bdf8;
+
+  margin-bottom:5px;
+
+}
+.awards-section{
+  margin-top:30px;
+}
+.awards-grid{
+
+  display:grid;
+
+  grid-template-columns:
+  repeat(auto-fit,minmax(180px,1fr));
+
+  gap:15px;
+
+}
+.award-card{
+
+  background:#1e293b;
+
+  padding:20px;
+
+  border-radius:12px;
+
+  text-align:center;
+
+  transition:.3s;
+background:var(--card);
+border:1px solid var(--border);
+color:var(--text);
+}
+.award-card:hover{
+
+  transform:
+  translateY(-5px);
+
+  background:#2563eb;
+
+}
+.award-card h3{
+
+  margin-top:10px;
+
+  color:#facc15;
+
+}
+.player-physical-card {
+  background: linear-gradient(
+    135deg,
+    rgba(15, 25, 50, 0.95),
+    rgba(8, 15, 35, 0.95)
+    
+  );
+
+  border-radius: 20px;
+  padding: 25px;
+  margin: 25px auto;
+
+  max-width: 700px;
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+  background:var(--card);
+border:1px solid var(--border);
+color:var(--text);
+}
+
+.player-physical-card h3{
+  text-align:center;
+  color:var(--text);
+}
+
+.physical-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 15px 0;
+
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+
+  color:var(--text);
+  
+}
+
+.physical-item:last-child {
+  border-bottom: none;
+}
+
+.physical-item span {
+   color:var(--subtext);
+  font-size: 17px;
+}
+
+.physical-item strong {
+  color: #4da6ff;
+  font-size: 18px;
+}
+.goals-history-section{
+  margin-top: 30px;
+}
+
+.goals-history-card{
+  background: rgba(255,255,255,0.05);
+  border-radius: 18px;
+  padding: 20px;
+  background:var(--card);
+border:1px solid var(--border);
+color:var(--text);
+}
+
+.goal-season-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  padding:15px 0;
+
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+
+.goal-season-row:last-child{
+  border-bottom:none;
+}
+
+.goal-season-row h3{
+  color:var(--text);
+  margin-bottom:5px;
+}
+
+.goal-season-row p{
+  color:var(--subtext);
+  font-size:14px;
+}
+
+.goal-count{
+  background:#1f6fff;
+  color:white;
+  padding:8px 15px;
+  border-radius:20px;
+  font-weight:600;
+}
+.theme-toggle{
+  position:fixed;
+  top:20px;
+  right:20px;
+
+  padding:10px 18px;
+
+  border:1px solid var(--border);
+  border-radius:12px;
+
+  background:var(--card);
+  color:var(--text);
+
+  cursor:pointer;
+  z-index:999;
+}
+.player-page h1,
+.player-page h2,
+.player-page h3,
+.player-page h4,
+.player-page p,
+.player-page span,
+.player-page strong{
+  color:var(--text);
+}
+.career-item{
+  display:flex;
+  align-items:center;
+  gap:15px;
+
+  border-left:3px solid #2563eb;
+  padding-left:15px;
+  margin-bottom:20px;
+}
+
+.career-logo{
+  width:45px;
+  height:45px;
+  object-fit:contain;
+  border-radius:50%;
+  background:white;
+  padding:4px;
+}
