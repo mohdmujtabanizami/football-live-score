@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000";
+const API_URL = "https://football-live-score-dlf6.onrender.com";
 
 export const getLiveScores = async () => {
   const res = await fetch(
