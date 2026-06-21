@@ -190,12 +190,52 @@ app.get("/api/fixtures/:leagueId", async (req, res) => {
         ? 2022
         : req.query.season || CURRENT_SEASON;
 
-    const response = await footballApi.get("/fixtures", {
-      params: {
-        league: leagueId,
-        season: seasonToUse,
+    const matches = response.data.response || [];
+
+if (matches.length === 0) {
+  return res.json([
+    {
+      fixture: {
+        id: 888001,
+        status: {
+          elapsed: 72,
+          long: "Live",
+          short: "LIVE",
+        },
+        venue: {
+          name: "Lusail Stadium",
+          city: "Doha",
+        },
+        date: new Date().toISOString(),
       },
-    });
+      league: {
+        name: "FIFA World Cup",
+        logo: "",
+        country: "World",
+        season: 2026,
+        round: "Group Stage",
+      },
+      teams: {
+        home: {
+          id: 1,
+          name: "Argentina",
+          logo: "",
+        },
+        away: {
+          id: 2,
+          name: "Brazil",
+          logo: "",
+        },
+      },
+      goals: {
+        home: 2,
+        away: 1,
+      },
+    },
+  ]);
+}
+
+res.json(matches);
 
     res.json(response.data.response || []);
   } catch (err) {
