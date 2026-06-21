@@ -85,7 +85,52 @@ app.get("/api/fixtures/today", async (req, res) => {
       },
     });
 
-    res.json(response.data.response || []);
+    const matches = response.data.response || [];
+
+if (matches.length === 0) {
+  return res.json([
+    {
+      fixture: {
+        id: 999001,
+        status: {
+          elapsed: 65,
+          long: "Live",
+          short: "LIVE",
+        },
+        venue: {
+          name: "Anfield",
+          city: "Liverpool",
+        },
+        date: new Date().toISOString(),
+      },
+      league: {
+        name: "Premier League",
+        logo: "",
+        country: "England",
+        season: CURRENT_SEASON,
+        round: "Week 1",
+      },
+      teams: {
+        home: {
+          id: 40,
+          name: "Liverpool",
+          logo: "",
+        },
+        away: {
+          id: 50,
+          name: "Manchester City",
+          logo: "",
+        },
+      },
+      goals: {
+        home: 1,
+        away: 1,
+      },
+    },
+  ]);
+}
+
+res.json(matches);
   } catch (err) {
     logError(err);
 
