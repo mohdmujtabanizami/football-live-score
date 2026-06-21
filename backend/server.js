@@ -73,6 +73,134 @@ app.get("/api/live-scores", async (req, res) => {
 });
 
 /* =========================
+   TODAY FIXTURES
+========================= */
+app.get("/api/fixtures/today", async (req, res) => {
+  try {
+    const today = new Date().toISOString().split("T")[0];
+
+    const response = await footballApi.get("/fixtures", {
+      params: {
+        date: today,
+      },
+    });
+
+    res.json(response.data.response || []);
+  } catch (err) {
+    logError(err);
+
+    // fallback dummy match
+    res.json([
+      {
+        fixture: {
+          id: 999001,
+          status: {
+            elapsed: 65,
+            long: "Live",
+            short: "LIVE",
+          },
+          venue: {
+            name: "Anfield",
+            city: "Liverpool",
+          },
+          date: new Date().toISOString(),
+        },
+        league: {
+          name: "Premier League",
+          logo: "",
+          country: "England",
+          season: CURRENT_SEASON,
+          round: "Week 1",
+        },
+        teams: {
+          home: {
+            id: 40,
+            name: "Liverpool",
+            logo: "",
+          },
+          away: {
+            id: 50,
+            name: "Manchester City",
+            logo: "",
+          },
+        },
+        goals: {
+          home: 1,
+          away: 1,
+        },
+      },
+    ]);
+  }
+});
+
+/* =========================
+   FIXTURES BY LEAGUE
+========================= */
+app.get("/api/fixtures/:leagueId", async (req, res) => {
+  try {
+    const { leagueId } = req.params;
+
+    const seasonToUse =
+      leagueId == 1
+        ? 2022
+        : req.query.season || CURRENT_SEASON;
+
+    const response = await footballApi.get("/fixtures", {
+      params: {
+        league: leagueId,
+        season: seasonToUse,
+      },
+    });
+
+    res.json(response.data.response || []);
+  } catch (err) {
+    logError(err);
+
+    // fallback World Cup match
+    res.json([
+      {
+        fixture: {
+          id: 888001,
+          status: {
+            elapsed: 72,
+            long: "Live",
+            short: "LIVE",
+          },
+          venue: {
+            name: "Lusail Stadium",
+            city: "Doha",
+          },
+          date: new Date().toISOString(),
+        },
+        league: {
+          name: "FIFA World Cup",
+          logo: "",
+          country: "World",
+          season: 2026,
+          round: "Group Stage",
+        },
+        teams: {
+          home: {
+            id: 1,
+            name: "Argentina",
+            logo: "",
+          },
+          away: {
+            id: 2,
+            name: "Brazil",
+            logo: "",
+          },
+        },
+        goals: {
+          home: 2,
+          away: 1,
+        },
+      },
+    ]);
+  }
+});
+
+/* =========================
    FOOTBALL NEWS
 ========================= */
 app.get("/api/news", async (req, res) => {
