@@ -20,21 +20,38 @@ export default function useMatches(
         ).then((res) => res.json()),
       ])
         .then(([todayData, wcData]) => {
+          console.log("TODAY DATA:", todayData);
+console.log("WORLD CUP DATA:", wcData);
+console.log("TODAY TYPE:", typeof todayData);
+console.log("WC TYPE:", typeof wcData);
           const todayArr =
-            Array.isArray(todayData)
-              ? todayData
-              : [];
+  Array.isArray(todayData)
+    ? todayData
+    : [];
 
-          const wcArr =
-            Array.isArray(wcData)
-              ? wcData
-              : [];
+const wcArr =
+  Array.isArray(wcData)
+    ? wcData
+    : [];
+
+console.log(
+  "TODAY LENGTH:",
+  todayArr.length
+);
+
+console.log(
+  "WC LENGTH:",
+  wcArr.length
+);
 
           const combinedMatches = [
             ...todayArr,
             ...wcArr,
           ];
-
+console.log(
+  "COMBINED MATCHES:",
+  combinedMatches
+);
           const uniqueMatches =
             Array.from(
               new Map(
@@ -99,7 +116,7 @@ export default function useMatches(
                   item.league.round,
               })
             );
-
+console.log("FORMATTED MATCHES:", formattedMatches);
           setMatches(
             formattedMatches
           );
