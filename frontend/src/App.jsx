@@ -1,3 +1,4 @@
+import { API_URL } from "./config";
 import React, { useEffect, useState } from "react";
 import "./App.css";
 
@@ -63,9 +64,9 @@ function App() {
   const openMatchDetails = async (match) => {
     try {
       const [eventsRes, lineupsRes, statsRes] = await Promise.all([
-        fetch(`http://localhost:5000/api/match-events/${match.id}`).then((res) => res.json()),
-        fetch(`http://localhost:5000/api/lineups/${match.id}`).then((res) => res.json()),
-        fetch(`http://localhost:5000/api/match-stats/${match.id}`).then((res) => res.json()),
+       fetch(`${API_URL}/api/match-events/${match.id}`).then((res) => res.json()),
+       fetch(`${API_URL}/api/lineups/${match.id}`).then((res) => res.json()),
+       fetch(`${API_URL}/api/match-stats/${match.id}`).then((res) => res.json()),
       ]);
       setSelectedMatchPage({ ...match, events: eventsRes || [], lineups: lineupsRes || [], stats: statsRes || [] });
     } catch (error) { console.error("Failed to load match details", error); }
@@ -74,8 +75,8 @@ function App() {
   const openTeamDetails = async (teamId) => {
     try {
       const [teamRes, squadRes] = await Promise.all([
-        fetch(`http://localhost:5000/api/team/${teamId}`).then((res) => res.json()),
-        fetch(`http://localhost:5000/api/team/${teamId}/players`).then((res) => res.json()),
+       fetch(`${API_URL}/api/team/${teamId}`).then((res) => res.json()),
+       fetch(`${API_URL}/api/team/${teamId}/players`).then((res) => res.json()),
       ]);
       setSelectedTeam({
         id: teamId, name: teamRes.team.name, logo: teamRes.team.logo,

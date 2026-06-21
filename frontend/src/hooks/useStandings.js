@@ -1,3 +1,4 @@
+import { API_URL } from "../config";
 import { useEffect, useState } from "react";
 import { LEAGUE_IDS } from "../utils/constants";
 
@@ -26,7 +27,7 @@ export default function useStandings(
           LEAGUE_IDS[selectedLeague] || 39;
 
         const response = await fetch(
-          `http://localhost:5000/api/standings/${leagueId}`
+          `${API_URL}/api/standings/${leagueId}`
         );
 
         const data =

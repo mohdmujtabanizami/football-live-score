@@ -1,3 +1,4 @@
+import { API_URL } from "../config";
 import { useState, useEffect } from "react";
 import "./TeamPage.css";
 
@@ -10,7 +11,7 @@ function TeamPage({ team, onBack, onPlayerClick }) {
     if (team && team.id) {
       // Backend automatically defaults to the current season and league 39 (Premier League) 
       // if specific query params aren't passed, which is perfect for this view.
-      fetch(`http://localhost:5000/api/team/${team.id}/stats`)
+      fetch(`${API_URL}/api/team/${team.id}/stats`)
         .then((res) => res.json())
         .then((data) => {
           setStats(data);

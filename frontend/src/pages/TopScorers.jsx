@@ -1,3 +1,4 @@
+import { API_URL } from "../config";
 import React, { useState, useEffect } from "react";
 import "./TopScorers.css";
 // Local backup data import
@@ -27,7 +28,7 @@ function TopScorers({ onBack, darkMode, onPlayerClick }) {
         const leagueId = LEAGUES[selectedLeague];
         const season = leagueId === 1 ? 2022 : 2023;
         
-        const response = await fetch(`http://localhost:5000/api/top-scorers/${leagueId}?season=${season}`);
+        const response = await fetch(`${API_URL}/api/top-scorers/${leagueId}?season=${season}`);
         const data = await response.json();
 
         if (data && data.length > 0) {

@@ -1,3 +1,4 @@
+import { API_URL } from "../config";
 import { useEffect, useState } from "react";
 
 export default function useMatches(
@@ -10,11 +11,11 @@ export default function useMatches(
     const fetchScores = () => {
       Promise.all([
         fetch(
-          "http://localhost:5000/api/fixtures/today"
+          `${API_URL}/api/fixtures/today`
         ).then((res) => res.json()),
 
         fetch(
-          "http://localhost:5000/api/fixtures/1?season=2026"
+          `${API_URL}/api/fixtures/1?season=2026`
         ).then((res) => res.json()),
       ])
         .then(([todayData, wcData]) => {

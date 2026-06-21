@@ -1,3 +1,4 @@
+import { API_URL } from "../config";
 import { useState, useEffect } from "react";
 import "./PlayerPage.css";
 
@@ -22,10 +23,10 @@ function PlayerPage({ player, onBack }) {
     if (player && player.id) {
       setLoading(true);
       Promise.all([
-        fetch(`http://localhost:5000/api/player/${player.id}`).then(res => res.json()),
-        fetch(`http://localhost:5000/api/player/${player.id}/trophies`).then(res => res.json()),
-        fetch(`http://localhost:5000/api/player/${player.id}/transfers`).then(res => res.json()),
-        fetch(`http://localhost:5000/api/player/${player.id}/history`).then(res => res.json())
+       fetch(`${API_URL}/api/player/${player.id}`).then(res => res.json()),
+       fetch(`${API_URL}/api/player/${player.id}/trophies`).then(res => res.json()),
+       fetch(`${API_URL}/api/player/${player.id}/transfers`).then(res => res.json()),
+       fetch(`${API_URL}/api/player/${player.id}/history`).then(res => res.json())
       ])
       .then(([playerData, trophiesData, transfersData, historyData]) => {
         setRealData(playerData);

@@ -1,3 +1,4 @@
+import { API_URL } from "../config";
 import React, { useState, useEffect } from "react";
 import "./StandingsPage.css"; 
 import { standingsData } from "../standingsData"; // Backup data import
@@ -24,7 +25,7 @@ function StandingsPage({ onBack, darkMode, onTeamClick }) {
         // World Cup (ID 1) ke liye 2022 season, baaki ke liye 2023
         const season = leagueId === 1 ? 2022 : 2023;
         
-        const response = await fetch(`http://localhost:5000/api/standings/${leagueId}?season=${season}`);
+        const response = await fetch(`${API_URL}/api/standings/${leagueId}?season=${season}`);
         const data = await response.json();
         
         if (data && data[0]?.league?.standings[0]) {

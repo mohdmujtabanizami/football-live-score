@@ -1,3 +1,4 @@
+import { API_URL } from "../config";
 import { useEffect, useState } from "react";
 
 export default function useNews(language) {
@@ -31,7 +32,7 @@ export default function useNews(language) {
 
         const response =
           await fetch(
-            `http://localhost:5000/api/news?lang=${
+           `${API_URL}/api/news?lang=${
               langMap[language] || "en"
             }`
           );
