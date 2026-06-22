@@ -62,17 +62,14 @@ function App() {
   }, [darkMode, language]);
 
   // ================= HARDWARE BACK BUTTON LOGIC =================
-  // 1. App start hone par ek fake history state add karein taaki exit intercept ho sake
   useEffect(() => {
     window.history.pushState(null, "", window.location.href);
   }, []);
 
-  // 2. Back button click handle karne ka listener
   useEffect(() => {
     const handleBackButton = (e) => {
       let preventAppExit = false;
 
-      // Jo bhi screen open hai, use reverse order mein close karein
       if (selectedPlayer) { setSelectedPlayer(null); preventAppExit = true; }
       else if (selectedMatchPage) { setSelectedMatchPage(null); preventAppExit = true; }
       else if (selectedTeam) { setSelectedTeam(null); preventAppExit = true; }
@@ -81,7 +78,6 @@ function App() {
       else if (showStandings) { setShowStandings(false); preventAppExit = true; }
       else if (currentPage !== "home") { setCurrentPage("home"); preventAppExit = true; }
 
-      // Agar koi screen close hui hai, toh app ko band hone se rokne ke liye wapas ek history dal dein
       if (preventAppExit) {
         window.history.pushState(null, "", window.location.href);
       }
@@ -90,8 +86,6 @@ function App() {
     window.addEventListener("popstate", handleBackButton);
     return () => window.removeEventListener("popstate", handleBackButton);
   }, [selectedPlayer, selectedMatchPage, selectedTeam, selectedNews, showScorers, showStandings, currentPage]);
-  // ==============================================================
-
 
   // ================= DATA FETCHING HANDLERS =================
   const openMatchDetails = async (match) => {
@@ -104,12 +98,7 @@ function App() {
       setSelectedMatchPage({ ...match, events: eventsRes || [], lineups: lineupsRes || [], stats: statsRes || [] });
     } catch (error) {
       console.warn("API Offline: Opening Match Page with Dummy Data", error);
-      setSelectedMatchPage({
-        ...match,
-        events: [],
-        lineups: [],
-        stats: [],
-      });
+      setSelectedMatchPage({ ...match, events: [], lineups: [], stats: [] });
     }
   };
 
@@ -120,37 +109,25 @@ function App() {
         fetch(`${API_URL}/api/team/${teamId}/players`).then((res) => res.json()),
       ]);
       setSelectedTeam({
-        id: teamId, 
-        name: teamRes.team.name, 
-        logo: teamRes.team.logo,
-        founded: teamRes.team.founded, 
-        stadium: teamRes.venue.name,
-        city: teamRes.venue.city, 
-        capacity: teamRes.venue.capacity,
+        id: teamId, name: teamRes.team.name, logo: teamRes.team.logo,
+        founded: teamRes.team.founded, stadium: teamRes.venue.name,
+        city: teamRes.venue.city, capacity: teamRes.venue.capacity,
         squad: squadRes[0]?.players || []
       });
-      setShowStandings(false); 
-      setShowScorers(false);
+      setShowStandings(false); setShowScorers(false);
     } catch (error) {
       console.warn("API Offline: Opening Team Page with Dummy Data", error);
       setSelectedTeam({
-        id: teamId,
-        name: teamName,
-        logo: teamLogo,
-        founded: "N/A",
-        stadium: "Offline Stadium",
-        city: "N/A",
-        capacity: "0",
-        squad: [],
+        id: teamId, name: teamName, logo: teamLogo, founded: "N/A",
+        stadium: "Offline Stadium", city: "N/A", capacity: "0", squad: [],
       });
-      setShowStandings(false); 
-      setShowScorers(false);
+      setShowStandings(false); setShowScorers(false);
     }
   };
 
   // ================= PAGE ROUTING =================
   if (selectedPlayer) return <PlayerPage player={selectedPlayer} onBack={() => setSelectedPlayer(null)} />;
-  if (selectedMatchPage) return <MatchDetails match={selectedMatchPage} onBack={() => setSelectedMatchPage(null)} onPlayer卿Click={setSelectedPlayer} />;
+  if (selectedMatchPage) return <MatchDetails match={selectedMatchPage} onBack={() => setSelectedMatchPage(null)} onPlayerClick={setSelectedPlayer} />;
   if (selectedTeam) return <TeamPage team={selectedTeam} onBack={() => setSelectedTeam(null)} onPlayerClick={setSelectedPlayer} />;
   
   if (showScorers) return <TopScorers onBack={() => setShowScorers(false)} darkMode={darkMode} onPlayerClick={setSelectedPlayer} />;
@@ -161,6 +138,7 @@ function App() {
       <Navbar
         currentPage={currentPage} setCurrentPage={setCurrentPage}
         setShowStandings={setShowStandings} setShowScorers={setShowScorers}
+        showStandings={showStandings} showScorers={showScorers}
         darkMode={darkMode} setDarkMode={setDarkMode}
         language={language} setLanguage={setLanguage}
         user={user} handleLogin={handleLogin} handleLogout={handleLogout}

@@ -13,85 +13,67 @@ function Navbar({
   showMenu,
   setShowMenu,
   logo,
-  t
+  t,
+  // Note: Aapko props mein 'showStandings' aur 'showScorers' bhi add karna hoga
+  showStandings, 
+  showScorers 
 }) {
   return (
     <div className="top-navbar">
-
       <img src={logo} alt="ScoreHub" className="site-logo" />
 
       <div className="nav-links">
         <span
-          onClick={() => setCurrentPage("home")}
+          onClick={() => { setCurrentPage("home"); setShowStandings(false); setShowScorers(false); }}
           className={currentPage === "home" ? "active-nav" : ""}
         >
           {t.home}
         </span>
 
         <span
-          onClick={() => setCurrentPage("live")}
+          onClick={() => { setCurrentPage("live"); setShowStandings(false); setShowScorers(false); }}
           className={currentPage === "live" ? "active-nav" : ""}
         >
           {t.liveScores}
         </span>
 
         <span
-          onClick={() => setCurrentPage("news")}
+          onClick={() => { setCurrentPage("news"); setShowStandings(false); setShowScorers(false); }}
           className={currentPage === "news" ? "active-nav" : ""}
         >
           {t.news}
         </span>
 
-        <span onClick={() => setShowStandings(true)}>
+        <span 
+          onClick={() => { setShowStandings(true); setShowScorers(false); setCurrentPage(null); }}
+          className={showStandings ? "active-nav" : ""}
+        >
           {t.rankings}
         </span>
 
-        <span onClick={() => setShowScorers(true)}>
+        <span 
+          onClick={() => { setShowScorers(true); setShowStandings(false); setCurrentPage(null); }}
+          className={showScorers ? "active-nav" : ""}
+        >
           {t.topScorers}
         </span>
       </div>
 
+      {/* Settings Wrapper wahi rahega... */}
       <div className="settings-wrapper">
-
-        <button
-          className="settings-btn"
-          onClick={() => setShowMenu(!showMenu)}
-        >
-          ☰
-        </button>
-
+        <button className="settings-btn" onClick={() => setShowMenu(!showMenu)}>☰</button>
         {showMenu && (
           <div className="settings-menu">
-
-            <button onClick={() => setDarkMode(!darkMode)}>
-              {darkMode ? t.lightMode : t.darkMode}
-            </button>
-
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-            >
-              <option>English</option>
-              <option>Hindi</option>
-              <option>Urdu</option>
-              <option>Arabic</option>
-              <option>French</option>
-              <option>Spanish</option>
+            <button onClick={() => setDarkMode(!darkMode)}>{darkMode ? t.lightMode : t.darkMode}</button>
+            <select value={language} onChange={(e) => setLanguage(e.target.value)}>
+              <option>English</option><option>Hindi</option><option>Urdu</option>
+              <option>Arabic</option><option>French</option><option>Spanish</option>
             </select>
-
             {user ? (
-              <>
-                <div>{user.displayName}</div>
-                <button onClick={handleLogout}>
-                  {t.logout}
-                </button>
-              </>
+              <><div>{user.displayName}</div><button onClick={handleLogout}>{t.logout}</button></>
             ) : (
-              <button onClick={handleLogin}>
-                {t.login}
-              </button>
+              <button onClick={handleLogin}>{t.login}</button>
             )}
-
           </div>
         )}
       </div>
