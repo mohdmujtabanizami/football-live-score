@@ -47,7 +47,6 @@ const footballApi = axios.create({
   },
 });
 
-// FIXED: Removed infinite recursion loop by using console.error directly
 const logError = (err) => {
   console.error(err.response?.data || err.message || "An error occurred");
 };
@@ -65,7 +64,7 @@ app.get("/", (req, res) => {
 app.get("/api/live-scores", async (req, res) => {
   try {
     const response = await footballApi.get("/fixtures", { params: { live: "all" } });
-    res.json(response.data.response);
+    res.json(response.data.response || []);
   } catch (err) {
     logError(err);
     res.status(500).json({ error: "Failed to fetch live scores" });
@@ -86,95 +85,13 @@ app.get("/api/fixtures/today", async (req, res) => {
     });
 
     const matches = response.data.response || [];
-
-if (matches.length === 0) {
-  return res.json([
-    {
-      fixture: {
-        id: 999001,
-        status: {
-          elapsed: 65,
-          long: "Live",
-          short: "LIVE",
-        },
-        venue: {
-          name: "Anfield",
-          city: "Liverpool",
-        },
-        date: new Date().toISOString(),
-      },
-      league: {
-        name: "Premier League",
-        logo: "",
-        country: "England",
-        season: CURRENT_SEASON,
-        round: "Week 1",
-      },
-      teams: {
-        home: {
-          id: 40,
-          name: "Liverpool",
-          logo: "",
-        },
-        away: {
-          id: 50,
-          name: "Manchester City",
-          logo: "",
-        },
-      },
-      goals: {
-        home: 1,
-        away: 1,
-      },
-    },
-  ]);
-}
-
-res.json(matches);
+    
+    // Agar match nahi hain, toh khali array bhejein, dummy data nahi
+    res.json(matches);
   } catch (err) {
     logError(err);
-
-    // fallback dummy match
-    res.json([
-      {
-        fixture: {
-          id: 999001,
-          status: {
-            elapsed: 65,
-            long: "Live",
-            short: "LIVE",
-          },
-          venue: {
-            name: "Anfield",
-            city: "Liverpool",
-          },
-          date: new Date().toISOString(),
-        },
-        league: {
-          name: "Premier League",
-          logo: "",
-          country: "England",
-          season: CURRENT_SEASON,
-          round: "Week 1",
-        },
-        teams: {
-          home: {
-            id: 40,
-            name: "Liverpool",
-            logo: "",
-          },
-          away: {
-            id: 50,
-            name: "Manchester City",
-            logo: "",
-          },
-        },
-        goals: {
-          home: 1,
-          away: 1,
-        },
-      },
-    ]);
+    // Error aane par error bhejein, nakli Liverpool match nahi
+    res.status(500).json({ error: "Failed to fetch today's fixtures" });
   }
 });
 
@@ -190,98 +107,18 @@ app.get("/api/fixtures/:leagueId", async (req, res) => {
         ? 2022
         : req.query.season || CURRENT_SEASON;
 
+    const response = await footballApi.get("/fixtures", {
+      params: { league: leagueId, season: seasonToUse },
+    });
+
     const matches = response.data.response || [];
 
-if (matches.length === 0) {
-  return res.json([
-    {
-      fixture: {
-        id: 888001,
-        status: {
-          elapsed: 72,
-          long: "Live",
-          short: "LIVE",
-        },
-        venue: {
-          name: "Lusail Stadium",
-          city: "Doha",
-        },
-        date: new Date().toISOString(),
-      },
-      league: {
-        name: "FIFA World Cup",
-        logo: "",
-        country: "World",
-        season: 2026,
-        round: "Group Stage",
-      },
-      teams: {
-        home: {
-          id: 1,
-          name: "Argentina",
-          logo: "",
-        },
-        away: {
-          id: 2,
-          name: "Brazil",
-          logo: "",
-        },
-      },
-      goals: {
-        home: 2,
-        away: 1,
-      },
-    },
-  ]);
-}
-
-res.json(matches);
-
-    res.json(response.data.response || []);
+    // Agar match nahi hain, toh khali array bhejein, dummy World Cup data nahi
+    res.json(matches);
   } catch (err) {
     logError(err);
-
-    // fallback World Cup match
-    res.json([
-      {
-        fixture: {
-          id: 888001,
-          status: {
-            elapsed: 72,
-            long: "Live",
-            short: "LIVE",
-          },
-          venue: {
-            name: "Lusail Stadium",
-            city: "Doha",
-          },
-          date: new Date().toISOString(),
-        },
-        league: {
-          name: "FIFA World Cup",
-          logo: "",
-          country: "World",
-          season: 2026,
-          round: "Group Stage",
-        },
-        teams: {
-          home: {
-            id: 1,
-            name: "Argentina",
-            logo: "",
-          },
-          away: {
-            id: 2,
-            name: "Brazil",
-            logo: "",
-          },
-        },
-        goals: {
-          home: 2,
-          away: 1,
-        },
-      },
-    ]);
+    // Error aane par error bhejein, nakli Argentina match nahi
+    res.status(500).json({ error: "Failed to fetch league fixtures" });
   }
 });
 
@@ -398,12 +235,11 @@ app.get("/api/player/:id", async (req, res) => {
 });
 
 /* =========================
-   TOP SCORERS (FIXED WITH FIFA WORLD CUP LOGIC)
+   TOP SCORERS
 ========================= */
 app.get("/api/top-scorers/:leagueId", async (req, res) => {
   try {
     const { leagueId } = req.params;
-    // FIFA World Cup (ID 1) requires season 2022
     const seasonToUse = leagueId == 1 ? 2022 : (req.query.season || CURRENT_SEASON);
 
     const response = await footballApi.get("/players/topscorers", {
