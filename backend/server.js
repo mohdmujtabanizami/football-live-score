@@ -1,4 +1,9 @@
-// Smart Season Detector
+const express = require("express");
+const cors = require("cors");
+const axios = require("axios");
+const rateLimit = require("express-rate-limit");
+require("dotenv").config();
+
 const getCurrentSeason = () => {
   const month = new Date().getMonth(); 
   const year = new Date().getFullYear();
@@ -6,51 +11,32 @@ const getCurrentSeason = () => {
 };
 const CURRENT_SEASON = getCurrentSeason();
 
-const express = require("express");
-const cors = require("cors");
-const axios = require("axios");
-const rateLimit = require("express-rate-limit");
-require("dotenv").config();
-
 if (!process.env.API_KEY) {
   console.error("API_KEY missing in .env");
   process.exit(1);
 }
 
-if (!process.env.NEWS_API_KEY) {
-  console.error("NEWS_API_KEY missing in .env");
-  process.exit(1);
-}
-
 const app = express();
-
 app.use(cors());
 app.use(express.json());
 
 /* =========================
    RATE LIMITER
 ========================= */
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-});
+const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });
 app.use(limiter);
 
 /* =========================
-   API FOOTBALL CONFIG
+   API FOOTBALL CONFIG (SINGLE KEY)
 ========================= */
 const footballApi = axios.create({
   baseURL: "https://v3.football.api-sports.io",
-  headers: {
-    "x-apisports-key": process.env.API_KEY,
-  },
+  headers: { "x-apisports-key": process.env.API_KEY },
 });
 
-// Smart function to catch silent API limits/errors
 const checkApiErrors = (responseData) => {
   if (responseData.errors && Object.keys(responseData.errors).length > 0) {
-    console.error("API-SPORTS SILENT ERROR DETECTED:", responseData.errors);
-    throw new Error(`API Error: ${JSON.stringify(responseData.errors)}`);
+    console.error("API ERROR DETECTED:", responseData.errors);
   }
 };
 
@@ -62,7 +48,7 @@ const logError = (err) => {
    HEALTH CHECK
 ========================= */
 app.get("/", (req, res) => {
-  res.send("Football Backend Running ⚽");
+  res.send("Football Backend Running ⚽ (Single Key)");
 });
 
 /* =========================
@@ -75,25 +61,32 @@ app.get("/api/live-scores", async (req, res) => {
     res.json(response.data.response || []);
   } catch (err) {
     logError(err);
-    res.status(429).json({ error: "Failed to fetch live scores or API limit reached" });
+    res.status(500).json({ error: "Failed to fetch live scores" });
   }
 });
 
 /* =========================
-   TODAY FIXTURES
+   TODAY FIXTURES (NEVER BLANK FIX)
 ========================= */
 app.get("/api/fixtures/today", async (req, res) => {
   try {
     const today = new Date().toISOString().split("T")[0];
-    const response = await footballApi.get("/fixtures", { params: { date: today } });
-    
+    let response = await footballApi.get("/fixtures", { params: { date: today } });
     checkApiErrors(response.data);
     
-    const matches = response.data.response || [];
+    let matches = response.data.response || [];
+
+    // SMART FALLBACK: Agar aaj koi match nahi hai, toh aane wale 20 matches dikhao
+    if (matches.length === 0) {
+      console.log("No matches today. Fetching next 20 upcoming matches...");
+      response = await footballApi.get("/fixtures", { params: { next: 20 } });
+      matches = response.data.response || [];
+    }
+
     res.json(matches);
   } catch (err) {
     logError(err);
-    res.status(429).json({ error: "API Limit Reached or Failed to fetch today's fixtures" });
+    res.status(500).json({ error: "API Limit Reached or Data failed" });
   }
 });
 
@@ -103,20 +96,16 @@ app.get("/api/fixtures/today", async (req, res) => {
 app.get("/api/fixtures/:leagueId", async (req, res) => {
   try {
     const { leagueId } = req.params;
-    // Removed the 2022 hardcoding bug
     const seasonToUse = req.query.season || CURRENT_SEASON;
 
     const response = await footballApi.get("/fixtures", {
       params: { league: leagueId, season: seasonToUse },
     });
-
     checkApiErrors(response.data);
-
-    const matches = response.data.response || [];
-    res.json(matches);
+    res.json(response.data.response || []);
   } catch (err) {
     logError(err);
-    res.status(429).json({ error: "API Limit Reached or Failed to fetch league fixtures" });
+    res.status(500).json({ error: "Failed to fetch league fixtures" });
   }
 });
 
@@ -131,7 +120,7 @@ app.get("/api/news", async (req, res) => {
 
     const response = await axios.get("https://newsapi.org/v2/everything", {
       params: {
-        q: "(football OR soccer OR premier league OR champions league OR fifa world cup OR la liga OR bundesliga OR serie a)",
+        q: "(football OR soccer OR premier league OR champions league OR fifa world cup OR la liga)",
         language: langToUse,
         sortBy: "publishedAt",
         pageSize: 20,
@@ -150,7 +139,6 @@ app.get("/api/news", async (req, res) => {
       source: article.source.name,
       url: article.url,
     }));
-
     res.json(news);
   } catch (err) {
     logError(err);
@@ -176,7 +164,7 @@ app.get("/api/match-events/:id", async (req, res) => {
   try {
     const response = await footballApi.get("/fixtures/events", { params: { fixture: req.params.id } });
     checkApiErrors(response.data);
-    res.json(response.data.response);
+    res.json(response.data.response || []);
   } catch (err) {
     logError(err);
     res.status(500).json({ error: "Events fetch failed" });
@@ -190,7 +178,7 @@ app.get("/api/lineups/:fixtureId", async (req, res) => {
   try {
     const response = await footballApi.get("/fixtures/lineups", { params: { fixture: req.params.fixtureId } });
     checkApiErrors(response.data);
-    res.json(response.data.response);
+    res.json(response.data.response || []);
   } catch (err) {
     logError(err);
     res.status(500).json({ error: "Lineups fetch failed" });
@@ -215,7 +203,7 @@ app.get("/api/team/:id/players", async (req, res) => {
   try {
     const response = await footballApi.get("/players/squads", { params: { team: req.params.id } });
     checkApiErrors(response.data);
-    res.json(response.data.response);
+    res.json(response.data.response || []);
   } catch (err) {
     logError(err);
     res.status(500).json({ error: "Squad fetch failed" });
@@ -245,7 +233,6 @@ app.get("/api/top-scorers/:leagueId", async (req, res) => {
   try {
     const { leagueId } = req.params;
     const seasonToUse = req.query.season || CURRENT_SEASON;
-
     const response = await footballApi.get("/players/topscorers", {
       params: { league: leagueId, season: seasonToUse },
     });
@@ -266,7 +253,7 @@ app.get("/api/standings/:league", async (req, res) => {
       params: { league: req.params.league, season: req.query.season || CURRENT_SEASON },
     });
     checkApiErrors(response.data);
-    res.json(response.data.response);
+    res.json(response.data.response || []);
   } catch (err) {
     logError(err);
     res.status(500).json({ error: "Standings fetch failed" });
