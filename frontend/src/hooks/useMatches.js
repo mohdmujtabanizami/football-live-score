@@ -1,12 +1,11 @@
 import { API_URL } from "../config";
-import { dummyMatches } from "../data/dummyMatches";
 import { useEffect, useState } from "react";
 
 export default function useMatches(notificationsEnabled) {
   const [matches, setMatches] = useState([]);
 
   useEffect(() => {
-    // Real API ke raw data ko aapke dummy data ke structure jaisa format karne ke liye function
+    // Real API ke raw data ko app ke format mein convert karne wala function
     const formatMatches = (matchesArray) => {
       return matchesArray.map((item) => ({
         id: item?.fixture?.id,
@@ -54,29 +53,33 @@ export default function useMatches(notificationsEnabled) {
 
           const combinedMatches = [...todayArr, ...wcArr];
 
-          // Agar API limit ki wajah se dono arrays khali hain, toh catch block trigger karein
+          // Agar API limit ki wajah se data nahi aaya, toh khali array set karein
           if (combinedMatches.length === 0) {
-            throw new Error("API limit reached or empty data");
+            setMatches([]);
+            return;
           }
 
           const uniqueMatches = Array.from(
             new Map(combinedMatches.map((m) => [m.fixture.id, m])).values()
           );
 
-          // Real API data raw hota hai, isliye ise format karna zaroori hai
+          // Real API data set karna
           setMatches(formatMatches(uniqueMatches));
         })
         .catch((err) => {
-          console.warn("Using Fallback Data:", err.message);
-          // DHYAN DEIN: Chunki aapka dummyMatches pehle se hi formatted hai, 
-          // isliye hum ise bina format kiye direct set kar rahe hain.
-          setMatches(dummyMatches);
+          console.error("API Limit Reached or Error:", err.message);
+          // Pura dummy data logic hata diya gaya hai.
+          // Ab limit khatm hone par app chupchap khali state mein rahegi.
+          setMatches([]);
         });
     };
 
+    // Pehli baar load hone par call karein
     fetchScores();
 
-    const interval = setInterval(fetchScores, 180000); // Har 3 minute mein refresh
+    // Har 3 minute (180000ms) mein auto-check karein.
+    // Jab credit wapas aayega, ye apne aap data le aayegi!
+    const interval = setInterval(fetchScores, 180000); 
 
     return () => clearInterval(interval);
   }, [notificationsEnabled]);
