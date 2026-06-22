@@ -23,7 +23,7 @@ import NewsModal from "./components/NewsModal";
 import TeamPage from "./pages/TeamPage";
 import PlayerPage from "./pages/PlayerPage";
 import TopScorers from "./pages/TopScorers";
-import StandingsPage from "./pages/StandingsPage"; // <-- StandingsPage Import
+import StandingsPage from "./pages/StandingsPage";
 import MatchDetails from "./pages/MatchDetails";
 
 function App() {
@@ -40,7 +40,7 @@ function App() {
   const [selectedNews, setSelectedNews] = useState(null);
   
   // Page Toggles
-  const [showStandings, setShowStandings] = useState(false); // StandingsPage ke liye
+  const [showStandings, setShowStandings] = useState(false);
   const [showScorers, setShowScorers] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   
@@ -61,19 +61,49 @@ function App() {
     localStorage.setItem("language", language);
   }, [darkMode, language]);
 
-  // ================= DATA FETCHING HANDLERS =================
+  // ================= HARDWARE BACK BUTTON LOGIC =================
+  // 1. App start hone par ek fake history state add karein taaki exit intercept ho sake
+  useEffect(() => {
+    window.history.pushState(null, "", window.location.href);
+  }, []);
 
+  // 2. Back button click handle karne ka listener
+  useEffect(() => {
+    const handleBackButton = (e) => {
+      let preventAppExit = false;
+
+      // Jo bhi screen open hai, use reverse order mein close karein
+      if (selectedPlayer) { setSelectedPlayer(null); preventAppExit = true; }
+      else if (selectedMatchPage) { setSelectedMatchPage(null); preventAppExit = true; }
+      else if (selectedTeam) { setSelectedTeam(null); preventAppExit = true; }
+      else if (selectedNews) { setSelectedNews(null); preventAppExit = true; }
+      else if (showScorers) { setShowScorers(false); preventAppExit = true; }
+      else if (showStandings) { setShowStandings(false); preventAppExit = true; }
+      else if (currentPage !== "home") { setCurrentPage("home"); preventAppExit = true; }
+
+      // Agar koi screen close hui hai, toh app ko band hone se rokne ke liye wapas ek history dal dein
+      if (preventAppExit) {
+        window.history.pushState(null, "", window.location.href);
+      }
+    };
+
+    window.addEventListener("popstate", handleBackButton);
+    return () => window.removeEventListener("popstate", handleBackButton);
+  }, [selectedPlayer, selectedMatchPage, selectedTeam, selectedNews, showScorers, showStandings, currentPage]);
+  // ==============================================================
+
+
+  // ================= DATA FETCHING HANDLERS =================
   const openMatchDetails = async (match) => {
     try {
       const [eventsRes, lineupsRes, statsRes] = await Promise.all([
-       fetch(`${API_URL}/api/match-events/${match.id}`).then((res) => res.json()),
-       fetch(`${API_URL}/api/lineups/${match.id}`).then((res) => res.json()),
-       fetch(`${API_URL}/api/match-stats/${match.id}`).then((res) => res.json()),
+        fetch(`${API_URL}/api/match-events/${match.id}`).then((res) => res.json()),
+        fetch(`${API_URL}/api/lineups/${match.id}`).then((res) => res.json()),
+        fetch(`${API_URL}/api/match-stats/${match.id}`).then((res) => res.json()),
       ]);
       setSelectedMatchPage({ ...match, events: eventsRes || [], lineups: lineupsRes || [], stats: statsRes || [] });
     } catch (error) {
       console.warn("API Offline: Opening Match Page with Dummy Data", error);
-      // Fallback: API fail hone par bhi page khulega
       setSelectedMatchPage({
         ...match,
         events: [],
@@ -86,8 +116,8 @@ function App() {
   const openTeamDetails = async (teamId, teamName = "Unknown Team", teamLogo = "") => {
     try {
       const [teamRes, squadRes] = await Promise.all([
-       fetch(`${API_URL}/api/team/${teamId}`).then((res) => res.json()),
-       fetch(`${API_URL}/api/team/${teamId}/players`).then((res) => res.json()),
+        fetch(`${API_URL}/api/team/${teamId}`).then((res) => res.json()),
+        fetch(`${API_URL}/api/team/${teamId}/players`).then((res) => res.json()),
       ]);
       setSelectedTeam({
         id: teamId, 
@@ -103,7 +133,6 @@ function App() {
       setShowScorers(false);
     } catch (error) {
       console.warn("API Offline: Opening Team Page with Dummy Data", error);
-      // Fallback: API fail hone par bhi team page khulega basic info ke sath
       setSelectedTeam({
         id: teamId,
         name: teamName,
@@ -121,7 +150,7 @@ function App() {
 
   // ================= PAGE ROUTING =================
   if (selectedPlayer) return <PlayerPage player={selectedPlayer} onBack={() => setSelectedPlayer(null)} />;
-  if (selectedMatchPage) return <MatchDetails match={selectedMatchPage} onBack={() => setSelectedMatchPage(null)} onPlayerClick={setSelectedPlayer} />;
+  if (selectedMatchPage) return <MatchDetails match={selectedMatchPage} onBack={() => setSelectedMatchPage(null)} onPlayer卿Click={setSelectedPlayer} />;
   if (selectedTeam) return <TeamPage team={selectedTeam} onBack={() => setSelectedTeam(null)} onPlayerClick={setSelectedPlayer} />;
   
   if (showScorers) return <TopScorers onBack={() => setShowScorers(false)} darkMode={darkMode} onPlayerClick={setSelectedPlayer} />;
@@ -138,7 +167,6 @@ function App() {
         showMenu={showMenu} setShowMenu={setShowMenu} logo={logo} t={t}
       />
 
-      {/* YAHAN UPDATE KIYA GAYA HAI: setSelectedNews={setSelectedNews} add kiya hai */}
       {currentPage === "home" && <HomePage matches={matches} news={news} newsLoading={newsLoading} newsError={newsError} t={t} openMatchDetails={openMatchDetails} setSelectedNews={setSelectedNews} />}
       
       {currentPage === "live" && (
