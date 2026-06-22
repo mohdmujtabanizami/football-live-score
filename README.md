@@ -1,42 +1,42 @@
-# ⚽ ScoreHub - Football Live Score Website
+# ⚽ ScoreHub - Live Football Scores & Statistics
 
-A modern football web application built with React.js and Node.js.
+A modern, responsive, and installable football web application built with React.js. Get real-time updates on football matches, team stats, and player news.
 
-## Features
+## ✨ Features
 
-* Live Football Scores
-* Match Statistics
-* Team Details
-* Player Profiles
-* League Standings
-* Top Scorers
-* Football News
-* Multi-language Support
-* Dark / Light Mode
-* Favorite Teams & Matches
+* **Live Football Scores & Match Events**
+* **Detailed Team & Player Profiles**
+* **League Standings & Top Scorers**
+* **Football News Integration**
+* **Progressive Web App (PWA):** Installable directly on Mobile & PC home screens.
+* **Offline Fallback Support:** Graceful error handling when API limits are reached.
+* **Firebase Authentication:** Secure Google Sign-in.
+* **Multi-language Support & Dark/Light Mode Theme Toggle**
+* **Fully Responsive Design:** Optimized for all screen sizes.
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 ### Frontend
+* **React.js** (Vite)
+* **CSS3 & JavaScript** (Responsive UI/UX)
+* **PWA** (Manifest & Service Workers)
 
-* React.js
-* Vite
-* CSS3
-* JavaScript
+### Backend & Services
+* **Node.js & Express.js** (REST APIs)
+* **Firebase** (User Authentication)
+* **Third-Party APIs** (For Live Football Data & News)
 
-### Backend
+## 🚀 Live Demo
 
-* Node.js
-* Express.js
-* REST APIs
+**[Click here to view ScoreHub Live](https://football-live-score-one.vercel.app)**
 
-## Screenshots
+## 💻 How to Run Locally
 
-Coming Soon
+If you want to run this project on your local machine, follow these steps:
 
-## Live Demo
-
-Coming Soon
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/mohdmujtabanizami/football-live-score.git](https://github.com/mohdmujtabanizami/football-live-score.git)
 
 ## Author
 
