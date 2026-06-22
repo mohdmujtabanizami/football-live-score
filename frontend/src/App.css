@@ -1699,3 +1699,103 @@ body {
   font-weight: 600;
   line-height: 1.4;
 }
+/* ==========================================================================
+   📱 RESPONSIVE DESIGN (Mobile, Tablet, PC) - "App Like" Feel
+   ========================================================================== */
+
+/* 💻 TABLET & SMALL LAPTOPS (Max Width: 1024px) */
+@media (max-width: 1024px) {
+  .container, .home-section { padding: 15px; }
+  .hero-logo { width: 300px; }
+  .title, .section-title { font-size: 24px; }
+  .matches-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+}
+
+/* 📱 MOBILE SCREENS (Max Width: 768px) */
+@media (max-width: 768px) {
+  /* Navbar Adjustments */
+  .top-navbar {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+    text-align: center;
+  }
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    font-size: 14px;
+  }
+
+  /* Grid Adjustments - Force 1 column on Mobile */
+  .matches-grid, 
+  .news-grid, 
+  .home-live-grid, 
+  .related-grid {
+    grid-template-columns: 1fr; 
+    gap: 15px;
+  }
+
+  /* Match Card Adjustments for Mobile */
+  .card { padding: 15px; }
+  .teams-row { gap: 5px; }
+  
+  .team img {
+    width: 50px !important; /* Mobile pe logo chota karna zaroori hai */
+    height: 50px !important;
+  }
+  
+  .team-name, .team p {
+    font-size: 14px !important;
+    max-width: 80px;
+    margin: 5px auto;
+  }
+  
+  .score { font-size: 28px !important; }
+  .status, .match-info, .extra-info { font-size: 12px; }
+
+  /* Tabs Adjustments */
+  .tabs {
+    justify-content: center;
+    gap: 8px;
+  }
+  .tabs button {
+    padding: 8px 12px;
+    font-size: 12px;
+    flex: 1 1 30%; /* Buttons ko stretch karke fit karega */
+  }
+
+  /* Modals (News, Standings, Stats) */
+  .news-modal, .stats-modal, .standings-modal {
+    width: 95%;
+    padding: 15px;
+  }
+  .news-modal-image { height: 200px; }
+  
+  /* Tables */
+  .standings-table th, .standings-table td {
+    padding: 10px 5px;
+    font-size: 13px;
+  }
+  .ranking-team-info img {
+    width: 25px;
+    height: 25px;
+  }
+
+  /* Search & Filters */
+  .league-filter, .search-box { max-width: 100%; }
+}
+
+/* 📱 EXTRA SMALL MOBILE (Max Width: 480px) */
+@media (max-width: 480px) {
+  .team img { 
+    width: 40px !important; 
+    height: 40px !important; 
+  }
+  .score { font-size: 24px !important; }
+  .league-logo { width: 20px; height: 20px; }
+  .league { font-size: 12px; padding: 6px 12px; }
+  
+  .nav-links span { font-size: 13px; }
+  .login-btn { padding: 8px 12px; font-size: 13px; }
+}
