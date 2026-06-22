@@ -35,17 +35,14 @@ export default function useMatches(notificationsEnabled) {
 
     const fetchScores = async () => {
       try {
-        // Promise.allSettled ka use kiya taaki ek fail ho toh dusra chalta rahe
-        const [todayRes, wcRes] = await Promise.allSettled([
+        // Ab hum sirf World Cup nahi, balki globally 'Today' aur 'Live' matches mangwa rahe hain
+        const [todayRes, liveRes] = await Promise.allSettled([
           fetch(`${API_URL}/api/fixtures/today`).then(res => res.ok ? res.json() : []),
-          fetch(`${API_URL}/api/fixtures/1?season=2026`).then(res => res.ok ? res.json() : [])
+          fetch(`${API_URL}/api/live-scores`).then(res => res.ok ? res.json() : [])
         ]);
 
         const todayData = todayRes.status === "fulfilled" ? todayRes.value : [];
-        const wcData = wcRes.status === "fulfilled" ? wcRes.value : [];
-
-        console.log("TODAY DATA RAW:", todayData);
-        console.log("WORLD CUP DATA RAW:", wcData);
+        const liveData = liveRes.status === "fulfilled" ? liveRes.value : [];
 
         const extractArray = (data) => {
           if (Array.isArray(data)) return data;
@@ -54,24 +51,25 @@ export default function useMatches(notificationsEnabled) {
         };
 
         const todayArr = extractArray(todayData);
-        const wcArr = extractArray(wcData);
+        const liveArr = extractArray(liveData);
 
-        const combinedMatches = [...todayArr, ...wcArr];
+        // Duniya bhar ke saare matches ko ek list mein jod diya
+        const combinedMatches = [...todayArr, ...liveArr];
 
-        // Sabse zaroori Check: Sirf wahi data aage jaye jisme 'fixture' aur 'id' maujood ho
+        // Sirf valid data aage pass karein
         const validMatches = combinedMatches.filter(m => m && m.fixture && m.fixture.id);
 
         if (validMatches.length === 0) {
-          console.warn("No valid matches found for today or World Cup.");
+          console.warn("No valid matches found currently.");
           setMatches([]);
           return;
         }
 
+        // Duplicate matches ko remove karne ka logic (kyunki aaj ka match live list mein bhi ho sakta hai)
         const uniqueMatches = Array.from(
           new Map(validMatches.map((m) => [m.fixture.id, m])).values()
         );
 
-        // Real API data set karna
         setMatches(formatMatches(uniqueMatches));
       } catch (err) {
         console.error("Critical Fetch Error:", err.message);
@@ -79,12 +77,8 @@ export default function useMatches(notificationsEnabled) {
       }
     };
 
-    // Pehli baar load hone par call karein
     fetchScores();
-
-    // Har 4 minute (240000ms) mein auto-check karein.
-    const interval = setInterval(fetchScores, 240000); 
-
+    const interval = setInterval(fetchScores, 240000); // 4 minutes auto-refresh
     return () => clearInterval(interval);
   }, [notificationsEnabled]);
 
