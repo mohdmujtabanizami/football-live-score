@@ -97,8 +97,9 @@ function App() {
       ]);
       setSelectedMatchPage({ ...match, events: eventsRes || [], lineups: lineupsRes || [], stats: statsRes || [] });
     } catch (error) {
-      console.warn("API Offline: Opening Match Page with Dummy Data", error);
-      setSelectedMatchPage({ ...match, events: [], lineups: [], stats: [] });
+      console.error("API Error: Cannot fetch match details", error);
+      alert("Match details are unavailable right now. API limit reached or server error.");
+      // Koi dummy data set nahi hoga
     }
   };
 
@@ -116,12 +117,9 @@ function App() {
       });
       setShowStandings(false); setShowScorers(false);
     } catch (error) {
-      console.warn("API Offline: Opening Team Page with Dummy Data", error);
-      setSelectedTeam({
-        id: teamId, name: teamName, logo: teamLogo, founded: "N/A",
-        stadium: "Offline Stadium", city: "N/A", capacity: "0", squad: [],
-      });
-      setShowStandings(false); setShowScorers(false);
+      console.error("API Error: Cannot fetch team details", error);
+      alert("Team details are unavailable right now. API limit reached or server error.");
+      // Koi dummy data set nahi hoga
     }
   };
 
