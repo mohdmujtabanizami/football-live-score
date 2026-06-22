@@ -9,10 +9,10 @@ function LiveScores({
   search = "",
   setSearch,
   leaguesList = [],
-  favorites = [], // FIX: Default empty array agar prop missing ho
-  favoriteTeams = [], // FIX: Default empty array agar prop missing ho
-  toggleFavorite = () => {}, // FIX: Default empty function
-  toggleFavoriteTeam = () => {}, // FIX: Default empty function
+  favorites = [], 
+  favoriteTeams = [], 
+  toggleFavorite = () => {}, 
+  toggleFavoriteTeam = () => {}, 
   openTeamDetails,
   openMatchDetails,
   selectedMatch,
@@ -83,7 +83,8 @@ function LiveScores({
                 <div className="teams-row">
                   <div className="team">
                     <img src={match?.homeLogo || ""} alt={match?.homeTeam} />
-                    <p className="team-name" onClick={(e) => { e.stopPropagation(); openTeamDetails(match?.homeId); }}>{match?.homeTeam}</p>
+                    {/* YAHAN UPDATE KIYA GAYA HAI: Team Name aur Logo pass kar rahe hain */}
+                    <p className="team-name" onClick={(e) => { e.stopPropagation(); openTeamDetails(match?.homeId, match?.homeTeam, match?.homeLogo); }}>{match?.homeTeam}</p>
                     <span className="team-star" onClick={(e) => { e.stopPropagation(); toggleFavoriteTeam(match?.homeTeam); }}>
                       {favoriteTeams.includes(match?.homeTeam) ? "⭐" : "☆"}
                     </span>
@@ -97,7 +98,8 @@ function LiveScores({
 
                   <div className="team">
                     <img src={match?.awayLogo || ""} alt={match?.awayTeam} />
-                    <p className="team-name" onClick={(e) => { e.stopPropagation(); openTeamDetails(match?.awayId); }}>{match?.awayTeam}</p>
+                    {/* YAHAN UPDATE KIYA GAYA HAI: Team Name aur Logo pass kar rahe hain */}
+                    <p className="team-name" onClick={(e) => { e.stopPropagation(); openTeamDetails(match?.awayId, match?.awayTeam, match?.awayLogo); }}>{match?.awayTeam}</p>
                     <span className="team-star" onClick={(e) => { e.stopPropagation(); toggleFavoriteTeam(match?.awayTeam); }}>
                       {favoriteTeams.includes(match?.awayTeam) ? "⭐" : "☆"}
                     </span>

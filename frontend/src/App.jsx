@@ -61,6 +61,8 @@ function App() {
     localStorage.setItem("language", language);
   }, [darkMode, language]);
 
+  // ================= DATA FETCHING HANDLERS =================
+
   const openMatchDetails = async (match) => {
     try {
       const [eventsRes, lineupsRes, statsRes] = await Promise.all([
@@ -69,24 +71,52 @@ function App() {
        fetch(`${API_URL}/api/match-stats/${match.id}`).then((res) => res.json()),
       ]);
       setSelectedMatchPage({ ...match, events: eventsRes || [], lineups: lineupsRes || [], stats: statsRes || [] });
-    } catch (error) { console.error("Failed to load match details", error); }
+    } catch (error) {
+      console.warn("API Offline: Opening Match Page with Dummy Data", error);
+      // Fallback: API fail hone par bhi page khulega
+      setSelectedMatchPage({
+        ...match,
+        events: [],
+        lineups: [],
+        stats: [],
+      });
+    }
   };
 
-  const openTeamDetails = async (teamId) => {
+  const openTeamDetails = async (teamId, teamName = "Unknown Team", teamLogo = "") => {
     try {
       const [teamRes, squadRes] = await Promise.all([
        fetch(`${API_URL}/api/team/${teamId}`).then((res) => res.json()),
        fetch(`${API_URL}/api/team/${teamId}/players`).then((res) => res.json()),
       ]);
       setSelectedTeam({
-        id: teamId, name: teamRes.team.name, logo: teamRes.team.logo,
-        founded: teamRes.team.founded, stadium: teamRes.venue.name,
-        city: teamRes.venue.city, capacity: teamRes.venue.capacity,
+        id: teamId, 
+        name: teamRes.team.name, 
+        logo: teamRes.team.logo,
+        founded: teamRes.team.founded, 
+        stadium: teamRes.venue.name,
+        city: teamRes.venue.city, 
+        capacity: teamRes.venue.capacity,
         squad: squadRes[0]?.players || []
       });
       setShowStandings(false); 
       setShowScorers(false);
-    } catch (error) { console.error("Failed to load team details", error); }
+    } catch (error) {
+      console.warn("API Offline: Opening Team Page with Dummy Data", error);
+      // Fallback: API fail hone par bhi team page khulega basic info ke sath
+      setSelectedTeam({
+        id: teamId,
+        name: teamName,
+        logo: teamLogo,
+        founded: "N/A",
+        stadium: "Offline Stadium",
+        city: "N/A",
+        capacity: "0",
+        squad: [],
+      });
+      setShowStandings(false); 
+      setShowScorers(false);
+    }
   };
 
   // ================= PAGE ROUTING =================
@@ -108,7 +138,8 @@ function App() {
         showMenu={showMenu} setShowMenu={setShowMenu} logo={logo} t={t}
       />
 
-      {currentPage === "home" && <HomePage matches={matches} news={news} newsLoading={newsLoading} newsError={newsError} t={t} openMatchDetails={openMatchDetails} />}
+      {/* YAHAN UPDATE KIYA GAYA HAI: setSelectedNews={setSelectedNews} add kiya hai */}
+      {currentPage === "home" && <HomePage matches={matches} news={news} newsLoading={newsLoading} newsError={newsError} t={t} openMatchDetails={openMatchDetails} setSelectedNews={setSelectedNews} />}
       
       {currentPage === "live" && (
         <LiveScores
