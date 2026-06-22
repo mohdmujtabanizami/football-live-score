@@ -42,68 +42,73 @@ function LiveScores({
       />
 
       <div className="matches-grid">
-        {matches.length > 0 ? (
+        {matches?.length > 0 ? (
           matches
             .filter((match) => {
-              const isLive = ["1H", "2H", "HT", "LIVE"].includes(match.statusShort);
-              const isUpcoming = ["NS", "TBD"].includes(match.statusShort);
-              const isFinished = ["FT", "AET", "PEN"].includes(match.statusShort);
+              const statusShort = match?.statusShort || "";
+              const isLive = ["1H", "2H", "HT", "LIVE"].includes(statusShort);
+              const isUpcoming = ["NS", "TBD"].includes(statusShort);
+              const isFinished = ["FT", "AET", "PEN"].includes(statusShort);
               
               if (activeTab === "LIVE") return isLive;
               if (activeTab === "UPCOMING") return isUpcoming;
               if (activeTab === "FINISHED") return isFinished;
-              if (activeTab === "FAVORITES") return favorites.includes(match.id);
-              if (activeTab === "MY_TEAMS") return favoriteTeams.includes(match.homeTeam) || favoriteTeams.includes(match.awayTeam);
+              if (activeTab === "FAVORITES") return favorites?.includes(match?.id);
+              if (activeTab === "MY_TEAMS") return favoriteTeams?.includes(match?.homeTeam) || favoriteTeams?.includes(match?.awayTeam);
               return true;
             })
-            .filter((match) =>
-              match.homeTeam.toLowerCase().includes(search.toLowerCase()) || 
-              match.awayTeam.toLowerCase().includes(search.toLowerCase())
-            )
-            .filter((match) => leagueFilter === "All" ? true : match.league === leagueFilter)
+            .filter((match) => {
+              // Yahan safe search logic apply kiya gaya hai
+              const homeName = match?.homeTeam?.toLowerCase() || "";
+              const awayName = match?.awayTeam?.toLowerCase() || "";
+              const searchTerm = search?.toLowerCase() || "";
+              
+              return homeName.includes(searchTerm) || awayName.includes(searchTerm);
+            })
+            .filter((match) => leagueFilter === "All" ? true : match?.league === leagueFilter)
             .map((match) => (
-              <div className="card" key={match.id} onClick={() => setSelectedMatch(selectedMatch === match.id ? null : match.id)}>
-                <div className="favorite-star" onClick={(e) => { e.stopPropagation(); toggleFavorite(match.id); }}>
-                  {favorites.includes(match.id) ? "⭐" : "☆"}
+              <div className="card" key={match?.id} onClick={() => setSelectedMatch(selectedMatch === match?.id ? null : match?.id)}>
+                <div className="favorite-star" onClick={(e) => { e.stopPropagation(); toggleFavorite(match?.id); }}>
+                  {favorites?.includes(match?.id) ? "⭐" : "☆"}
                 </div>
                 
                 <div className="league">
-                  <img src={match.leagueLogo} alt={match.league} className="league-logo" />
-                  <span>{match.league}</span>
+                  <img src={match?.leagueLogo} alt={match?.league} className="league-logo" />
+                  <span>{match?.league}</span>
                 </div>
                 
-                <div className="round">{match.round}</div>
+                <div className="round">{match?.round}</div>
 
                 <div className="teams-row">
                   <div className="team">
-                    <img src={match.homeLogo} alt={match.homeTeam} />
-                    <p className="team-name" onClick={(e) => { e.stopPropagation(); openTeamDetails(match.homeId); }}>{match.homeTeam}</p>
-                    <span className="team-star" onClick={(e) => { e.stopPropagation(); toggleFavoriteTeam(match.homeTeam); }}>
-                      {favoriteTeams.includes(match.homeTeam) ? "⭐" : "☆"}
+                    <img src={match?.homeLogo} alt={match?.homeTeam} />
+                    <p className="team-name" onClick={(e) => { e.stopPropagation(); openTeamDetails(match?.homeId); }}>{match?.homeTeam}</p>
+                    <span className="team-star" onClick={(e) => { e.stopPropagation(); toggleFavoriteTeam(match?.homeTeam); }}>
+                      {favoriteTeams?.includes(match?.homeTeam) ? "⭐" : "☆"}
                     </span>
                   </div>
 
                   <div className="score-section">
-                    {["1H", "2H", "HT", "LIVE"].includes(match.statusShort) && <div className="live-badge">{t.live}</div>}
-                    <div className="score">{match.score}</div>
-                    <div className="status">{match.statusShort} {match.minute ? `• ${match.minute}'` : ""}</div>
+                    {["1H", "2H", "HT", "LIVE"].includes(match?.statusShort) && <div className="live-badge">{t.live}</div>}
+                    <div className="score">{match?.score}</div>
+                    <div className="status">{match?.statusShort} {match?.minute ? `• ${match.minute}'` : ""}</div>
                   </div>
 
                   <div className="team">
-                    <img src={match.awayLogo} alt={match.awayTeam} />
-                    <p className="team-name" onClick={(e) => { e.stopPropagation(); openTeamDetails(match.awayId); }}>{match.awayTeam}</p>
-                    <span className="team-star" onClick={(e) => { e.stopPropagation(); toggleFavoriteTeam(match.awayTeam); }}>
-                      {favoriteTeams.includes(match.awayTeam) ? "⭐" : "☆"}
+                    <img src={match?.awayLogo} alt={match?.awayTeam} />
+                    <p className="team-name" onClick={(e) => { e.stopPropagation(); openTeamDetails(match?.awayId); }}>{match?.awayTeam}</p>
+                    <span className="team-star" onClick={(e) => { e.stopPropagation(); toggleFavoriteTeam(match?.awayTeam); }}>
+                      {favoriteTeams?.includes(match?.awayTeam) ? "⭐" : "☆"}
                     </span>
                   </div>
                 </div>
 
-                {selectedMatch === match.id && (
+                {selectedMatch === match?.id && (
                   <div className="match-details">
                     <h4>{t.matchDetails}</h4>
-                    <p>{t.stadium}: {match.venue}</p>
-                    <p>{t.country}: {match.country}</p>
-                    <p>{t.referee}: {match.referee || "Unknown"}</p>
+                    <p>{t.stadium}: {match?.venue}</p>
+                    <p>{t.country}: {match?.country}</p>
+                    <p>{t.referee}: {match?.referee || "Unknown"}</p>
                   </div>
                 )}
                 <button className="stats-btn" onClick={(e) => { e.stopPropagation(); openMatchDetails(match); }}>
